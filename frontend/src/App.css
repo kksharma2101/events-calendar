@@ -1,0 +1,20 @@
+.calender-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+.calender-container > input {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid black;
+}
+.calender-container > button {
+  border-radius: 5px;
+  border: none;
+  background-color: blue;
+  color: #fff;
+  padding: 5px 15px;
+  font-weight: 600;
+}

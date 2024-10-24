@@ -5,6 +5,7 @@ export const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DA
   dialect:  'postgres'
 });
 
+
 export const connection = async () => {
   try {
     await sequelize.authenticate();
@@ -13,10 +14,3 @@ export const connection = async () => {
     console.error('Unable to connect to the database:', error);
   }
 }
-
-// export const sequelize = new Sequelize(process.env.DATABASE_NAME, process.env.DATABASE_USER_NAME, process.env.DATABASE_PASSWORD, {
-//   host: process.env.DB_HOST,
-//   dialect: 'postgres',
-//   port: process.env.DB_PORT,
-//   logging: false,
-//   });
