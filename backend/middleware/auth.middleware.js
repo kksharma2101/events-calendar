@@ -7,9 +7,7 @@ export const userVerify = async (req, res, next) => {
   if (!token) return res.status(401).json({ error: "Unauthorized Token" });
 
   try {
-    // "6Y789HJgldks80jdkn"
     const payload = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    // console.log(payload)
     req.user = payload
     // await User.findByPk(payload.id);;
     

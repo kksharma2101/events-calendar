@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import { setUser } from "../middleware/auth.middleware.js";
 
 export const register = async (req, res) => {
   const { userName, email, password } = req.body;
