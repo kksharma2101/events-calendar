@@ -1,11 +1,12 @@
-// components/Register.js
 import React, { useState } from "react";
 import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [userName, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +15,7 @@ const Register = () => {
       email,
       password,
     });
-    alert("User registered!");
+    navigate("/");
   };
 
   return (
@@ -43,6 +44,8 @@ const Register = () => {
           required
         />
         <button type="submit">Register</button>
+        <p>If you have account</p>
+        <Link to="/">Login</Link>
       </div>
     </form>
   );

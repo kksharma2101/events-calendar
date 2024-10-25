@@ -5,7 +5,13 @@
   flex-direction: column;
   gap: 15px;
 }
-.calender-container > input {
+.calender-container > .input-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+}
+.calender-container > .input-container > input {
   padding: 5px;
   border-radius: 5px;
   border: 1px solid black;
@@ -21,18 +27,45 @@
 
 /* Event CSS */
 .eventForm-dlt-btn {
-    border: none;
-    padding: 5px 10px;
-    background-color: #ff0000;
-    border-radius: 5px;
-    color: #fff;
-    font-weight: 700;
+  border: none;
+  padding: 5px 10px;
+  background-color: #ff0000;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 700;
 }
 .eventForm-upt-btn {
-    border: none;
-    padding: 5px 10px;
-    background-color: #0048ff;
-    border-radius: 5px;
-    color: #fff;
-    font-weight: 700;
+  border: none;
+  padding: 5px 10px;
+  background-color: #0048ff;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: 700;
+}
+
+.navbar {
+  position: fixed;
+  background-color: #000;
+  margin-bottom: 5px;
+}
+.navbar > .main {
+  width: 100%;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.navbar > .main > button {
+  background: #ffffff;
+  color: #000;
+  font-weight: 700;
+  border-radius: 5px;
+  border: none;
+  margin: 0 10px;
+  padding: 5px 10px;
+  text-decoration: none;
+}
+.navbar > .main > h3 {
+  margin: 0 10px;
+  color: #fff;
 }

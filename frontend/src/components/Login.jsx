@@ -1,6 +1,6 @@
-// components/Login.js
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -8,12 +8,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await axios.post("http://localhost:5000/api/login", {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}login`, {
       email,
       password,
     });
     localStorage.setItem("token", response.data.token);
-    alert("Logged in!");
+    window.location.reload();
   };
 
   return (
@@ -35,6 +35,8 @@ const Login = () => {
           required
         />
         <button type="submit">Login</button>
+        <p>If you don't have account</p>
+        <Link to="/register">Register</Link>
       </div>
     </form>
   );

@@ -1,145 +1,178 @@
-// src/components/Calendar.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ".././App.css"
+import ".././App.css";
+import Login from "./Login";
 
 const Calendar = () => {
-  const [title, setTitle] = useState("");
-  const [discription, setDiscription] = useState("");
-  const [date, setDate] = useState("");
+  const [eventData, setEventsData] = useState([]);
+  const [events, setEvents] = useState({
+    title: "",
+    discription: "",
+    date: "",
+  });
 
+  const [updateEventId, setUpdatedEventId] = useState(null);
+  const token = localStorage.getItem("token");
+
+  // useEffect use for retrive content
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}get-events`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setEventsData(response.data.events);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchEvents();
+  }, [token]);
+
+  // Handel input change data
+  const handleChange = (e) => {
+    setEvents({ ...events, [e.target.name]: e.target.value });
+  };
+
+  // Handle create event
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const event =  await axios.post("http://localhost:5000/api/event", {title, discription, date})
-        if(event) {
-            alert("Event create succfully")
+      // Update events data
+      if (updateEventId) {
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}update-event/${updateEventId}`,
+          events,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      } else {
+        // Create Events
+        await axios.post(`${process.env.REACT_APP_API_URL}event`, events, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      }
+
+      setEvents({ title: "", discription: "", date: "" });
+
+      setUpdatedEventId(null);
+
+      // Re-fetch events
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}get-events`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
         }
+      );
+      setEventsData(response.data.events);
     } catch (error) {
-        console.log(error, "error in create event")
+      console.error("Error saving event:", error);
+    }
+  };
+
+  // Handlw update event
+  const handleUpdate = (event) => {
+    setEvents({
+      title: event.title,
+      discription: event.discription,
+      date: event.date,
+    });
+    setUpdatedEventId(event.id);
+  };
+
+  // Handle delete event
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}delete-event/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setEventsData(eventData.filter((event) => event.id !== id));
+    } catch (error) {
+      console.error("Error deleting event:", error);
     }
   };
 
   return (
     <>
-      <div className="">
-        <form onSubmit={handleSubmit}>
-          <div className="calender-container">
-            <h1>Create your Event</h1>
-            <input
-              type="text"
-              name="title"
-              placeholder="Event Title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-            <input
-              type="text"
-              name="description"
-              placeholder="Event Description"
-              value={discription}
-              onChange={(e) => setDiscription(e.target.value)}
-            />
-            <input
-              type="date"
-              name="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              required
-            />
+      {token ? (
+        <div>
+          <form onSubmit={handleSubmit}>
+            <div className="calender-container">
+              <h2>Calendar</h2>
+              <div className="input-container">
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Event Title"
+                  value={events.title}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="text"
+                  name="discription"
+                  placeholder="Event Discription"
+                  value={events.discription}
+                  onChange={handleChange}
+                  required
+                />
+                <input
+                  type="date"
+                  name="date"
+                  value={events.date}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <button type="submit">
+                {updateEventId ? "Update Event" : "Create Event"}
+              </button>
+            </div>
+          </form>
 
-            <button type="submit">Create Event</button>
+          {/* Events list */}
+          <div className="row row-cols-1 row-cols-md-3 g-4 px-4">
+            {eventData.map((event) => (
+              <ul key={event.id}>
+                <div
+                  className="card border-success mb-3 mt-4"
+                  style={{ maxWidth: "18rem" }}
+                >
+                  <div className="card-header bg-transparent border-success">
+                    <h3 className="card-title">{event.title}</h3>
+                    <p>{event.date.slice(0, 10)}</p>
+                  </div>
+                  <div className="card-body text-success">
+                    <p className="card-text">{event.discription}</p>
+                  </div>
+                  <div className="card-footer bg-transparent border-success d-flex justify-content-around">
+                    <button
+                      className="eventForm-upt-btn"
+                      onClick={() => handleUpdate(event)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="eventForm-dlt-btn"
+                      onClick={() => handleDelete(event.id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </ul>
+            ))}
           </div>
-        </form>
-      </div>
+        </div>
+      ) : (
+        <Login />
+      )}
     </>
   );
 };
-
-// const Calendar = ({ token }) => {
-//   const [events, setEvents] = useState([]);
-//   const [eventData, setEventData] = useState({ title: '', description: '', date: '' });
-//   const [editingEventId, setEditingEventId] = useState(null);
-
-//   useEffect(() => {
-//     const fetchEvents = async () => {
-//       try {
-//         const response = await axios.get("http://localhost:5000/api/get-events", {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//         setEvents(response.data);
-//       } catch (error) {
-//         console.error('Error fetching events:', error);
-//       }
-//     };
-//     fetchEvents();
-//   }, [token]);
-
-//   const handleChange = (e) => {
-//     setEventData({ ...eventData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     try {
-//       if (editingEventId) {
-//         await axios.put(`/api/events/${editingEventId}`, eventData, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//       } else {
-//         await axios.post('/api/events', eventData, {
-//           headers: { Authorization: `Bearer ${token}` },
-//         });
-//       }
-//       setEventData({ title: '', description: '', date: '' });
-//       setEditingEventId(null);
-//       // Re-fetch events
-//       const response = await axios.get("http://localhost:5000/api/get-events", {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       setEvents(response.data);
-//     } catch (error) {
-//       console.error('Error saving event:', error);
-//     }
-//   };
-
-//   const handleEdit = (event) => {
-//     setEventData({ title: event.title, description: event.description, date: event.date });
-//     setEditingEventId(event.id);
-//   };
-
-//   const handleDelete = async (id) => {
-//     try {
-//       await axios.delete(`/api/events/${id}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-//       setEvents(events.filter((event) => event.id !== id));
-//     } catch (error) {
-//       console.error('Error deleting event:', error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Calendar</h2>
-//       <form onSubmit={handleSubmit}>
-//         <input type="text" name="title" placeholder="Event Title" value={eventData.title} onChange={handleChange} required />
-//         <input type="text" name="description" placeholder="Event Description" value={eventData.description} onChange={handleChange} />
-//         <input type="datetime-local" name="date" value={eventData.date} onChange={handleChange} required />
-//         <button type="submit">{editingEventId ? 'Update Event' : 'Create Event'}</button>
-//       </form>
-//       <ul>
-//         {events.map((event) => (
-//           <li key={event.id}>
-//             <strong>{event.title}</strong> - {event.description} on {new Date(event.date).toLocaleString()}
-//             <button onClick={() => handleEdit(event)}>Edit</button>
-//             <button onClick={() => handleDelete(event.id)}>Delete</button>
-//           </li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
 
 export default Calendar;
