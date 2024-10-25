@@ -77,6 +77,7 @@ export const login = async (req, res) => {
   
     // Check if user exists
     const user = await User.findOne({ where: { email } });
+    // console.log(user.id)
 
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
@@ -92,7 +93,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET_KEY,
-      { expiresIn: "2h" }
+      { expiresIn: "4h" }
     );
 
     // res.cookie("authToken", token);
