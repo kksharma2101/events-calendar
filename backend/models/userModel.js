@@ -3,7 +3,7 @@ import {sequelize} from "../config/postgresDb.js"
 
 
 const User = sequelize.define(
-  'User',
+  "User",
   {
     // Model attributes are defined here
     userName: {
